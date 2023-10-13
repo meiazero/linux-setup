@@ -7,17 +7,13 @@
 # TODO: instalar docker
 # TODO: instalar insonminia
 # TODO: instalar pycharm, intelij, webstorm
-# TODO: instalar 
+# TODO: instalar configurar github cli
 
 #!/usr/bin/bash
 
 user_id="$(id -u)"
 if [ "$user_id" -ne 0 ]; then
-  echo "
-# The script:
-#
-# - Requires 'root' or 'sudo' privileges to run.
-"
+  echo "(script) => Requires 'root' or 'sudo' privileges to run."
   exit 1
 fi
 
@@ -25,7 +21,8 @@ _NALA="nala"
 sh_c='sh -c'
 
 pkgs=("curl" "wget" "zsh" "git" "vim" "exa" "fonts-jetbrains-mono"
-      "fonts-inconsolata" "build-essential" "nmap" "hydra" "bat" "make" "tor")
+      "fonts-inconsolata" "build-essential" "nmap" "hydra" "bat" "make" "tor"
+      "fonts-firacode" "gh")
 
 nala_exists(){
   local bin_paths=("/usr/local/bin" "/usr/bin" "/bin")
@@ -38,24 +35,16 @@ nala_exists(){
   done
 
   if [ "$nala_exists" -eq 1 ]; then
-    echo "-> Nala exists in the system."   
+    echo "(instaled) => Nala exists in the system."   
   else
-    echo "
-# 
-# Instaling nala in $path
-#
-"
+    echo "(installed) => Instaling nala in $path"
     install_nala
   fi
 }
 
 install_nala() {
   $sh_c "DEBIAN_FRONTEND=noninteractive apt-get install -y -qq $_NALA >/dev/null"
-  echo "
-# 
-# Nala installed successfully
-#
-"
+  echo "(installed) => Nala installed successfully"
 }
 
 do_install() {
@@ -64,11 +53,7 @@ do_install() {
     $_NALA install -y $pkg  
   done
   
-  echo "
-# 
-# All packages has installed
-#
-"
+  echo "(all) => All packages has installed"
 }
 
 do_install
