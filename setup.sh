@@ -1,3 +1,5 @@
+#!/usr/bin/bash
+
 # TODO: Fazer a instalação dos plugins zsh-autosuggestion e zsh-syntaxhighlight, 
 # TODO: pnpm
 # TODO: oh-my-zsh e powerlevel10k, 
@@ -8,8 +10,8 @@
 # TODO: instalar insonminia
 # TODO: instalar pycharm, intelij, webstorm
 # TODO: instalar configurar github cli
+# TODO: verificar se os pacotes já estão instalados antes de instalar
 
-#!/usr/bin/bash
 
 user_id="$(id -u)"
 if [ "$user_id" -ne 0 ]; then
@@ -20,12 +22,12 @@ fi
 _NALA="nala"
 sh_c='sh -c'
 
-pkgs=("curl" "wget" "zsh" "git" "vim" "exa" "fonts-jetbrains-mono"
-      "fonts-inconsolata" "build-essential" "nmap" "hydra" "bat" "make" "tor"
-      "fonts-firacode" "gh" "gpg")
+pkgs=("curl" "wget" "zsh" "git" "vim" 
+      "exa" "fonts-jetbrains-mono" "fonts-inconsolata" "build-essential" "nmap" 
+      "hydra" "bat" "make" "tor" "fonts-firacode" 
+      "gh" "gpg")
 
 alias="# Alias section
-
 alias ls='EXA_ICON_SPACING=2 exa -lFGBha --icons --git'
 alias cat='batcat'
 
@@ -70,46 +72,52 @@ install_nala() {
 
 insert_alias(){
   read -p "Would you like to insert some aliases in .zshrc? [y/n] " answer
-  if [ "$answer" != "${answer#[Yy]}" ] ;then
-    read -p "What's your username? " username
-    if [ -z "$username" ]; then
-      echo "(alias) => No username was informed"
-      exit 1
-    fi
-    
-     if [ -e "/home/$username/.zshrc" ] ;then
-      file_path="/home/$username/.zshrc"
-      echo "(alias) => .zshrc not found for user $username"
-      exit 1
-    fi
-  
-    read -p "Where is your .zshrc file? (default in '$file_path') " path
-    if [ ! -e "$file_path" ]; then
-      echo "(alias) => .zshrc not found for user $username"
-      exit 1
-    else
-      if [ -z "$path" ]; then
-        echo "(alias) => No path was informed, using default"
-        echo "$alias" >> "$file_path"
-        echo "(alias) => Inserting some alias in $file_path"
-      else
-        echo "$alias" >> "$path"
-        echo "(alias) => Inserting some alias in $path"
+  case $answer in
+    Y|y|yes)
+      read -p "What's your username? " username
+      if [ -z "$username" ]; then
+        echo "(alias) => No username was informed"
+        exit 1
       fi
-    fi
-  
-  elif [ "$answer" != "${answer#[Nn]}" ] ;then
-    echo "(alias) => Ok, no alias will be inserted"
-    exit 0
-  else
-    echo "(alias) => Invalid option"
-    exit 1
-  fi
+      
+      if ! file_path=$(find "/home/$username" -type f -name ".zshrc"); then
+        echo "(alias) => .zshrc not found for user $username"
+        exit 1
+      fi
+
+      if [ ! -e "$file_path" ]; then
+        file_path="/home/$username/.zshrc"
+        echo "(alias) => .zshrc not found for user $username, using default path"
+      fi
+    
+      read -p "Where is your .zshrc file? (default in '$file_path') " path
+      if [ ! -e "$file_path" ]; then
+        echo "(alias) => .zshrc not found for user $username"
+        exit 1
+      else
+        if [ -z "$path" ]; then
+          echo "(alias) => No path was informed, using default"
+          echo "$alias" >> "$file_path"
+          echo "(alias) => Inserting some alias in $file_path"
+        else
+          echo "$alias" >> "$path"
+          echo "(alias) => Inserting some alias in $path"
+        fi
+      fi
+      ;;
+    N|n|no)
+      echo "(alias) => Ok, no alias will be inserted"
+      ;;
+    *)
+      echo "(alias) => Invalid option"
+      exit 1
+      ;;
+  esac
 }
 
 do_install() {
   nala_exists
-  for pkg in "${pkgs[@]}"; do
+ for pkg in "${pkgs[@]}"; do
     $_NALA install -y $pkg  
   done
   code_install
@@ -117,5 +125,4 @@ do_install() {
   echo "(all) => All packages has installed"
 }
 
-# do_install
-new_mkdir
+do_install
