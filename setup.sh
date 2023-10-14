@@ -29,7 +29,8 @@ pkgs=("curl" "wget" "zsh" "git" "vim"
 
 alias="# Alias section
 alias ls='EXA_ICON_SPACING=2 exa -lFGBha --icons --git'
-alias cat='batcat'
+alias cat=batcat
+alias pn=pnpm
 
 # The nd is a commando to create a new directory and enter in it
 nd() {
@@ -126,7 +127,7 @@ pnpm_install(){
   else
     echo "(pnpm) => Installing pnpm..."
     curl -fsSL https://get.pnpm.io/install.sh | PNPM_HOME=$pnpm_path sh - >>/dev/null
-    echo "(pnpm) => pnpm installed"
+    echo "(pnpm) => pnpm installed on $pnpm_path"
   fi
 }
 
