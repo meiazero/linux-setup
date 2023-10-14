@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 # TODO: Fazer a instalação dos plugins zsh-autosuggestion e zsh-syntaxhighlight, 
 # TODO: pnpm
