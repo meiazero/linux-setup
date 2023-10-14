@@ -37,6 +37,8 @@ nd() {
 }
 "
 
+read -p "What's your username? " username
+
 nala_exists(){
   local bin_paths=("/usr/local/bin" "/usr/bin" "/bin")
   nala_exists=0
@@ -75,7 +77,6 @@ insert_alias(){
   read -p "Would you like to insert some aliases in .zshrc? [y/n] " answer
   case $answer in
     Y|y|yes)
-      read -p "What's your username? " username
       if [ -z "$username" ]; then
         echo "(alias) => No username was informed"
         exit 1
@@ -116,6 +117,19 @@ insert_alias(){
   esac
 }
 
+pnpm_install(){
+  local pnpm_path="/home/$username/.pnpm"
+  mkdir -pm 777 $pnpm_path
+  if [ -x "$(command -v pnpm)" ]; then
+    echo "(pnpm) => pnpm already installed"
+    exit 1
+  else
+    echo "(pnpm) => Installing pnpm..."
+    curl -fsSL https://get.pnpm.io/install.sh | PNPM_HOME=$pnpm_path sh - >>/dev/null
+    echo "(pnpm) => pnpm installed"
+  fi
+}
+
 do_install() {
   echo "(all) => Starting installation"
   echo "(all) => Updating apt before install nala"
@@ -126,6 +140,7 @@ do_install() {
     $_NALA install -y $pkg  
   done
   code_install
+  pnpm_install
   insert_alias
   echo "(all) => All packages has installed"
 }
