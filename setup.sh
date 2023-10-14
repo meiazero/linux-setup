@@ -131,6 +131,25 @@ pnpm_install(){
   fi
 }
 
+asdf_install(){
+  echo "(asdf) => Installing asdf..."
+  git clone https://github.com/asdf-vm/asdf.git /home/$username/.asdf --branch v0.13.1 --quiet >>/dev/null
+  echo "(asdf) => asdf installed"
+  echo "
+# asdf configuration
+
+. '/home/$username/.asdf/asdf.sh'
+
+# append completions to fpath
+fpath=(\${ASDF_DIR}/completions \$fpath)
+# initialise completions with ZSH's compinit
+autoload -Uz compinit && compinit
+
+# asdf configuration end
+" >> /home/$username/.zshrc
+  echo "(asdf) => asdf configured"
+}
+
 do_install() {
   echo "(all) => Starting installation"
   echo "(all) => Updating apt before install nala"
@@ -142,6 +161,7 @@ do_install() {
   done
   code_install
   pnpm_install
+  asdf_install
   insert_alias
   echo "(all) => All packages has installed"
 }
