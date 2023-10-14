@@ -22,7 +22,7 @@ sh_c='sh -c'
 
 pkgs=("curl" "wget" "zsh" "git" "vim" "exa" "fonts-jetbrains-mono"
       "fonts-inconsolata" "build-essential" "nmap" "hydra" "bat" "make" "tor"
-      "fonts-firacode" "gh")
+      "fonts-firacode" "gh" "gpg")
 
 nala_exists(){
   local bin_paths=("/usr/local/bin" "/usr/bin" "/bin")
