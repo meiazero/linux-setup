@@ -29,7 +29,8 @@ pkgs=("curl" "wget" "zsh" "git" "vim"
 
 alias="# Alias section
 alias ls='EXA_ICON_SPACING=2 exa -lFGBha --icons --git'
-alias cat='batcat'
+alias cat=batcat
+alias pn=pnpm
 
 # The nd is a commando to create a new directory and enter in it
 nd() {
@@ -126,8 +127,27 @@ pnpm_install(){
   else
     echo "(pnpm) => Installing pnpm..."
     curl -fsSL https://get.pnpm.io/install.sh | PNPM_HOME=$pnpm_path sh - >>/dev/null
-    echo "(pnpm) => pnpm installed"
+    echo "(pnpm) => pnpm installed on $pnpm_path"
   fi
+}
+
+asdf_install(){
+  echo "(asdf) => Installing asdf..."
+  git clone https://github.com/asdf-vm/asdf.git /home/$username/.asdf --branch v0.13.1 --quiet >>/dev/null
+  echo "(asdf) => asdf installed"
+  echo "
+# asdf configuration
+
+. '/home/$username/.asdf/asdf.sh'
+
+# append completions to fpath
+fpath=(\${ASDF_DIR}/completions \$fpath)
+# initialise completions with ZSH's compinit
+autoload -Uz compinit && compinit
+
+# asdf configuration end
+" >> /home/$username/.zshrc
+  echo "(asdf) => asdf configured"
 }
 
 do_install() {
@@ -141,6 +161,7 @@ do_install() {
   done
   code_install
   pnpm_install
+  asdf_install
   insert_alias
   echo "(all) => All packages has installed"
 }
