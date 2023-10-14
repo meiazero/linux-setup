@@ -9,7 +9,7 @@ jobs:
   run_script:
     strategy:
       matrix:
-        os: [debian-bookworm, debian-bullseye, debian-buster]
+        os: [debian-bookworm, debian-bullseye]
     
     runs-on: ${{ matrix.os }}
     
