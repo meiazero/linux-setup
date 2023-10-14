@@ -28,6 +28,11 @@ alias="# Alias section
 
 alias ls='EXA_ICON_SPACING=2 exa -lFGBha --icons --git'
 alias cat='batcat'
+
+# The nd is a commando to create a new directory and enter in it
+nd() {
+  mkdir -p \$1 && cd \$1
+}
 "
 
 nala_exists(){
@@ -112,4 +117,5 @@ do_install() {
   echo "(all) => All packages has installed"
 }
 
-do_install
+# do_install
+new_mkdir
