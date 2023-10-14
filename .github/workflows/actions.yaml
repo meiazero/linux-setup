@@ -7,12 +7,12 @@ on:
 
 jobs:
   run_script:
-    runs-on: ${{ matrix.os }}
-
     strategy:
       matrix:
-        os: [debian:bookworm-slim, debian:bullseye-slim, debian:buster-slim]
-
+        os: [debian-bookworm, debian-bullseye, debian-buster]
+    
+    runs-on: ${{ matrix.os }}
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
