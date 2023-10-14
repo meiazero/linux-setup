@@ -13,11 +13,11 @@
 # TODO: verificar se os pacotes já estão instalados antes de instalar
 
 
-user_id="$(id -u)"
-if [ "$user_id" -ne 0 ]; then
-  echo "(script) => Requires 'root' or 'sudo' privileges to run."
-  exit 1
-fi
+# user_id="$(id -u)"
+# if [ "$user_id" -ne 0 ]; then
+#   echo "(script) => Requires 'root' or 'sudo' privileges to run."
+#   exit 1
+# fi
 
 _NALA="nala"
 sh_c='sh -c'
@@ -26,6 +26,8 @@ pkgs=("curl" "wget" "zsh" "git" "vim"
       "exa" "fonts-jetbrains-mono" "fonts-inconsolata" "build-essential" "nmap" 
       "hydra" "bat" "make" "tor" "fonts-firacode" 
       "gh" "gpg")
+
+plugins=("nodejs" "python" "ruby" "rust" "lua" "java")
 
 alias="# Alias section
 alias ls='EXA_ICON_SPACING=2 exa -lFGBha --icons --git'
@@ -61,16 +63,16 @@ nala_exists(){
 
 code_install(){
   wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
-  install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
-  sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+  sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+  sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
   rm -f packages.microsoft.gpg
 
-  $sh_c "DEBIAN_FRONTEND=noninteractive apt-get install -y -qq code >/dev/null"
+  $sh_c "DEBIAN_FRONTEND=noninteractive sudo apt-get install -y -qq code >/dev/null"
   echo "(Visual Studio code) => code installed"
 }
 
 install_nala() {
-  $sh_c "DEBIAN_FRONTEND=noninteractive apt-get install -y -qq $_NALA >/dev/null"
+  $sh_c "DEBIAN_FRONTEND=noninteractive sudo apt-get install -y -qq $_NALA >/dev/null"
   echo "(installed) => Nala installed successfully"
 }
 
@@ -123,7 +125,6 @@ pnpm_install(){
   mkdir -pm 777 $pnpm_path
   if [ -x "$(command -v pnpm)" ]; then
     echo "(pnpm) => pnpm already installed"
-    exit 1
   else
     echo "(pnpm) => Installing pnpm..."
     curl -fsSL https://get.pnpm.io/install.sh | PNPM_HOME=$pnpm_path sh - >>/dev/null
@@ -131,9 +132,17 @@ pnpm_install(){
   fi
 }
 
+add_asdf_plugins(){
+  for plugin in "${plugins[@]}"; do
+    echo "(asdf) => Adding plugin: $plugin" 
+    asdf plugin add $plugin >>/dev/null
+  done
+}
+
 asdf_install(){
   echo "(asdf) => Installing asdf..."
   git clone https://github.com/asdf-vm/asdf.git /home/$username/.asdf --branch v0.13.1 --quiet >>/dev/null
+
   echo "(asdf) => asdf installed"
   echo "
 # asdf configuration
@@ -148,22 +157,28 @@ autoload -Uz compinit && compinit
 # asdf configuration end
 " >> /home/$username/.zshrc
   echo "(asdf) => asdf configured"
+  echo "(asdf) => Adding plugins"
+  # TOFIX: plugin installation  
+  add_asdf_plugins
+
+  chown -R $username:$username /home/$username/.asdf/
 }
 
 do_install() {
   echo "(all) => Starting installation"
   echo "(all) => Updating apt before install nala"
-  $sh_c "DEBIAN_FRONTEND=noninteractive apt-get update -qq >/dev/null"
+  $sh_c "DEBIAN_FRONTEND=noninteractive sudo apt-get update -qq >/dev/null"
 
   nala_exists
  for pkg in "${pkgs[@]}"; do
-    $_NALA install -y $pkg  
+    sudo $_NALA install -y $pkg  
   done
   code_install
-  pnpm_install
   asdf_install
+  pnpm_install
   insert_alias
   echo "(all) => All packages has installed"
 }
 
-do_install
+# do_install
+asdf_install
