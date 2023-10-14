@@ -39,6 +39,7 @@ nd() {
 
 nala_exists(){
   local bin_paths=("/usr/local/bin" "/usr/bin" "/bin")
+  nala_exists=0
   
   for path in "${bin_paths[@]}"; do
     if [[ -x "$path/nala" ]]; then
@@ -116,6 +117,10 @@ insert_alias(){
 }
 
 do_install() {
+  echo "(all) => Starting installation"
+  echo "(all) => Updating apt before install nala"
+  $sh_c "DEBIAN_FRONTEND=noninteractive apt-get update -qq >/dev/null"
+
   nala_exists
  for pkg in "${pkgs[@]}"; do
     $_NALA install -y $pkg  
