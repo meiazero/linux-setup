@@ -7,23 +7,18 @@ on:
 
 jobs:
   run_script:
+    runs-on: ubuntu-latest
+
     strategy:
       matrix:
-        os: [debian-bookworm, debian-bullseye]
-    
-    runs-on: ${{ matrix.os }}
+        os: [bookworm, bullseye]
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Test script
-      run: |
-        ./setup.sh
-        exit_code=$?
-        if [ $exit_code -eq 0 ]; then
-          echo "Script executed successfully."
-        else
-          echo "Script failed with exit code $exit_code."
-          exit $exit_code
-        fi
+    - name: Set up Docker
+      uses: docker/setup-qemu-action@v1
+
+    - name: Test script on Debian ${{ matrix.os }}
+      run: docker run --rm -v $PWD:/mnt -w /mnt debian:${{ matrix.os }} bash -c 'bash setup.sh'
