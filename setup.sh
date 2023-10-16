@@ -150,6 +150,13 @@ autoload -Uz compinit && compinit
   echo "(asdf) => asdf configured"
 }
 
+dbeaver_install(){
+  wget -O /usr/share/keyrings/dbeaver.gpg.key https://dbeaver.io/debs/dbeaver.gpg.key
+  echo "deb [signed-by=/usr/share/keyrings/dbeaver.gpg.key] https://dbeaver.io/debs/dbeaver-ce /" | sudo tee /etc/apt/sources.list.d/dbeaver.list
+  $sh_c "DEBIAN_FRONTEND=noninteractive apt-get update"
+  $_NALA install -y dbeaver-ce 
+}
+
 do_install() {
   echo "(all) => Starting installation"
   echo "(all) => Updating apt before install nala"
@@ -162,6 +169,7 @@ do_install() {
   code_install
   pnpm_install
   asdf_install
+  dbeaver_install
   insert_alias
   echo "(all) => All packages has installed"
 }
